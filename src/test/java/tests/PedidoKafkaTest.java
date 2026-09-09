@@ -4,8 +4,13 @@ import helpers.KafkaTestHelper;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +19,21 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Testcontainers
 public class PedidoKafkaTest {
+
+    @Container
+    private static final KafkaContainer kafka = new KafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:7.5.0")
+    );
 
     private static final String TOPICO_PEDIDOS = "pedidos-criados";
     private static final String TOPICO_DLQ = "pedidos-dlq";
+
+    @BeforeAll
+    static void setUp() {
+        KafkaTestHelper.setBootstrapServers(kafka.getBootstrapServers());
+    }
 
     @Test
     @DisplayName("CT01 - Deve publicar evento e validar Contrato (JSON Schema)")
@@ -41,7 +57,6 @@ public class PedidoKafkaTest {
 
             assertNotNull(evento, "Evento não encontrado para o pedido: " + pedidoId);
 
-            // Validação de Contrato via JSON Schema
             MatcherAssert.assertThat(
                     evento.value(),
                     JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/pedido-schema.json")
@@ -66,7 +81,7 @@ public class PedidoKafkaTest {
                     .findFirst()
                     .orElse(null);
 
-            assertNotNull(eventoDlq, "A mensagem com erro deveria ter sido redirecionada para o tópico de DLQ!");
+            assertNotNull(eventoDlq, "A mensagem com erro deveria ter sido redirecionada para a DLQ!");
             assertTrue(eventoDlq.value().contains("DESCONHECIDO"));
         });
     }
