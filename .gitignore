@@ -3,3 +3,4 @@
 *.iml
 *.log
 .DS_Store
+allure-results/
