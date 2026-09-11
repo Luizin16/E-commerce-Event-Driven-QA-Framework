@@ -1,0 +1,5 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","1729","CT02 - Deve rotear mensagem corrompida para a Dead Letter Queue (DLQ)","","2026-09-11","passed","2026-09-11","","tests.PedidoKafkaTest","tests.PedidoKafkaTest","deveRoteasMensagemInvalidaParaDLQ"
+"","782","CT03 - Deve garantir envio duplicado e consistência de idempotência do pedido","","2026-09-11","passed","2026-09-11","","tests.PedidoKafkaTest","tests.PedidoKafkaTest","deveValidarProcessamentoIdempotenteDePedidosDuplicados"
+"","2","PedidoKafkaTest","","2026-09-11","broken","2026-09-11","","tests.PedidoKafkaTest","tests.PedidoKafkaTest",""
+"","820","CT01 - Deve publicar evento e validar Contrato (JSON Schema)","","2026-09-11","passed","2026-09-11","","tests.PedidoKafkaTest","tests.PedidoKafkaTest","deveValidarContratoJsonSchemaDoEvento"
