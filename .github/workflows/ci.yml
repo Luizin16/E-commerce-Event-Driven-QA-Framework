@@ -27,11 +27,9 @@ jobs:
       - name: Executar suíte de testes (Maven + Testcontainers)
         run: mvn test
 
-      - name: Instalar Allure CLI
+      - name: Instalar Allure CLI via NPM
         if: always()
-        uses: allure-framework/setup-allure@v1
-        with:
-          allure-version: '2.29.0'
+        run: npm install -g allure-commandline
 
       - name: Gerar Relatório HTML do Allure
         if: always()
