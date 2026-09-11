@@ -22,6 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 public class PedidoKafkaTest {
 
+    // Força as propriedades do Docker na JVM antes da inicialização dos Testcontainers
+    static {
+        System.setProperty("docker.host", "tcp://localhost:2375");
+        System.setProperty("docker.apiVersion", "1.40");
+        System.setProperty("TESTCONTAINERS_RYUK_DISABLED", "true");
+    }
+
     @Container
     private static final KafkaContainer kafka = new KafkaContainer(
             DockerImageName.parse("confluentinc/cp-kafka:7.5.0")
