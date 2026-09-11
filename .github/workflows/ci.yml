@@ -28,13 +28,16 @@ jobs:
         run: mvn test
 
       - name: Gerar Allure Report
+        uses: simple-elf/allure-report-action@v1.9
         if: always()
-        run: mvn allure:report
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
 
       - name: Deploy Allure Report para GitHub Pages
-        if: always()
         uses: peaceiris/actions-gh-pages@v3
+        if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site/allure-maven-plugin
+          publish_dir: allure-history
           publish_branch: gh-pages
