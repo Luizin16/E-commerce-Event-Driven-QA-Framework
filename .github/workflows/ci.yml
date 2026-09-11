@@ -2,9 +2,12 @@ name: CI/CD Kafka QA Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
   test:
@@ -22,4 +25,16 @@ jobs:
           cache: maven
 
       - name: Executar suíte de testes (Maven + Testcontainers)
-        run: mvn clean test
+        run: mvn test
+
+      - name: Gerar Allure Report
+        if: always()
+        run: mvn allure:report
+
+      - name: Deploy Allure Report para GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site/allure-maven-plugin
+          publish_branch: gh-pages

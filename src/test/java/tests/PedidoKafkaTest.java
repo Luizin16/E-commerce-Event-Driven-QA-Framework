@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 public class PedidoKafkaTest {
 
-    // Força as propriedades do Docker na JVM antes da inicialização dos Testcontainers
     static {
         System.setProperty("docker.host", "tcp://localhost:2375");
         System.setProperty("docker.apiVersion", "1.40");
@@ -90,6 +89,31 @@ public class PedidoKafkaTest {
 
             assertNotNull(eventoDlq, "A mensagem com erro deveria ter sido redirecionada para a DLQ!");
             assertTrue(eventoDlq.value().contains("DESCONHECIDO"));
+        });
+    }
+
+    @Test
+    @DisplayName("CT03 - Deve garantir envio duplicado e consistência de idempotência do pedido")
+    void deveValidarProcessamentoIdempotenteDePedidosDuplicados() {
+        String pedidoId = "PED-DUPLICADO-" + UUID.randomUUID().toString().substring(0, 5);
+        String payloadJson = String.format(
+                "{\"pedidoId\": \"%s\", \"valor\": 250.00, \"status\": \"CRIADO\"}",
+                pedidoId
+        );
+
+        KafkaTestHelper.enviarMensagem(TOPICO_PEDIDOS, pedidoId, payloadJson);
+        KafkaTestHelper.enviarMensagem(TOPICO_PEDIDOS, pedidoId, payloadJson);
+
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<ConsumerRecord<String, String>> mensagens =
+                    KafkaTestHelper.consumirMensagens(TOPICO_PEDIDOS, "grupo-qa-idempotencia");
+
+            List<ConsumerRecord<String, String>> eventosDoPedido = mensagens.stream()
+                    .filter(m -> pedidoId.equals(m.key()))
+                    .toList();
+
+            assertEquals(2, eventosDoPedido.size(), "O tópico deve registrar as 2 mensagens com a mesma chave.");
+            assertEquals(eventosDoPedido.get(0).value(), eventosDoPedido.get(1).value(), "Os payloads das mensagens duplicadas devem ser idênticos.");
         });
     }
 }
