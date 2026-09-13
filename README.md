@@ -1,33 +1,48 @@
-# E-commerce Event-Driven QA Framework (Java + Apache Kafka)
+# 🚀 E-commerce Event-Driven QA Framework
 
-[![CI/CD Kafka QA Pipeline](https://github.com/Luizin16/E-commerce-Event-Driven-QA-Framework/actions/workflows/ci.yml/badge.svg)](https://github.com/Luizin16/E-commerce-Event-Driven-QA-Framework/actions)
+![CI/CD Pipeline](https://github.com/Luizin16/E-commerce-Event-Driven-QA-Framework/actions/workflows/ci.yml/badge.svg)
+![Allure Report Status](https://img.shields.io/badge/Allure%20Report-Live-brightgreen)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Testcontainers](https://img.shields.io/badge/Testcontainers-1.20-blue)
 
-Framework avançado de automação de testes focado na validação de arquiteturas orientadas a eventos (EDA) utilizando **Apache Kafka**, **Java 17**, **JUnit 5**, **RestAssured** e **Testcontainers**.
+Framework de automação de testes para arquiteturas orientadas a eventos (Event-Driven Architecture - EDA), utilizando **Apache Kafka**, **Testcontainers**, **JUnit 5**, **Rest-Assured** e integração contínua via **GitHub Actions** com relatórios dinâmicos no **Allure Report**.
 
-## 🎯 Diferenciais de Engenharia de Qualidade (SDET)
-
-- **Orquestração Efêmera de Infraestrutura (Testcontainers):** Elimina a dependência de subida manual do ambiente (`docker compose`). Os containers de Kafka são provisionados e destruídos programmaticamente pelo ciclo de vida do JUnit.
-- **Testes de Contrato (JSON Schema):** Validação estrutural de tipos, campos obrigatórios e enums para garantir compliance do evento publicado.
-- **Validação Assíncrona Reativa (Awaitility):** Polling dinâmico sem esperas estáticas (`Thread.sleep`), eliminando flakiness nos testes.
-- **Tratamento de Falhas e Resiliência (DLQ):** Testes focados em comportamentos de exceção e validação de roteamento para tópicos de *Dead Letter Queue*.
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Linguagem:** Java 17
-- **Test Runner:** JUnit 5
-- **Provisionamento Dinâmico:** Testcontainers Java
-- **Cliente Kafka:** Apache Kafka Clients
-- **Validação Assíncrona:** Awaitility
-- **Validação de Schema:** RestAssured JSON Schema Validator
-- **Pipeline de CI/CD:** GitHub Actions
+- **Test Runner:** JUnit 5 / Awaitility
+- **Infraestrutura Efêmera:** Testcontainers (Confluent Kafka 7.5.0)
+- **Validação de Contrato:** Rest-Assured JSON Schema Validator
+- **Report & Dashboard:** Allure Report
+- **Orquestração CI/CD:** GitHub Actions (Deploy automático via GitHub Pages)
 
-## 🚀 Como Executar Localmente
+---
 
-Graças ao **Testcontainers**, você não precisa subir nenhum arquivo do Docker Compose na mão. Basta manter o Docker Desktop aberto e rodar:
+## 📋 Cenários de Testes Automatizados
 
+- **CT01 - Validação de Contrato (JSON Schema):** Publicação de evento de pedido e validação estrita da estrutura do payload contra o esquema JSON.
+- **CT02 - Resiliência e Trata de Exceções (Dead Letter Queue):** Redirecionamento e captura de payloads corrompidos para a DLQ (`pedidos-dlq`).
+- **CT03 - Teste de Idempotência:** Envio de eventos duplicados para verificação da consistência de consumo e chaves de lote.
+
+---
+
+## 📊 Relatório de Testes (Allure Report)
+
+O dashboard interativo do Allure Report é gerado e atualizado automaticamente a cada commit realizado no repositório.
+
+🔗 **Acesse o relatório em tempo real:** [Dashboard Allure Report](https://luizin16.github.io/E-commerce-Event-Driven-QA-Framework/)
+
+---
+
+## 🚀 Como Executar em Ambiente Local
+
+### Pré-requisitos
+- JDK 17+
+- Maven 3.8+
+- Docker Engine / Docker Desktop ativo
+
+### Comando de Execução
 ```bash
-# Clonar o repositório
-git clone [https://github.com/Luizin16/E-commerce-Event-Driven-QA-Framework.git](https://github.com/Luizin16/E-commerce-Event-Driven-QA-Framework.git)
-
-# Executar a suíte completa de testes via Maven
-mvn clean test
+mvn test

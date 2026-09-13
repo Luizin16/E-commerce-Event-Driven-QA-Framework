@@ -1,6 +1,7 @@
 package tests;
 
 import helpers.KafkaTestHelper;
+import io.qameta.allure.*;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.hamcrest.MatcherAssert;
@@ -20,6 +21,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
+@Epic("Processamento de Pedidos")
+@Feature("Event-Driven Architecture com Kafka")
 public class PedidoKafkaTest {
 
     static {
@@ -43,6 +46,9 @@ public class PedidoKafkaTest {
 
     @Test
     @DisplayName("CT01 - Deve publicar evento e validar Contrato (JSON Schema)")
+    @Story("Validação de Contrato do Evento")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Garante que o evento de pedido publicado no tópico Kafka respeita a estrutura definida pelo JSON Schema estipulado.")
     void deveValidarContratoJsonSchemaDoEvento() {
         String pedidoId = "PED-" + UUID.randomUUID().toString().substring(0, 8);
         String payloadJson = String.format(
@@ -72,6 +78,9 @@ public class PedidoKafkaTest {
 
     @Test
     @DisplayName("CT02 - Deve rotear mensagem corrompida para a Dead Letter Queue (DLQ)")
+    @Story("Resiliência & Processamento de Exceções")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Valida o roteamento para a DLQ quando um payload de pedido corrompido ou desconhecido entra na fila.")
     void deveRoteasMensagemInvalidaParaDLQ() {
         String pedidoId = "PED-CORROMPIDO-" + UUID.randomUUID().toString().substring(0, 5);
         String payloadCorrompido = String.format("{\"pedidoId\": \"%s\", \"status\": \"DESCONHECIDO\"}", pedidoId);
@@ -94,6 +103,9 @@ public class PedidoKafkaTest {
 
     @Test
     @DisplayName("CT03 - Deve garantir envio duplicado e consistência de idempotência do pedido")
+    @Story("Garantia de Idempotência")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Garante que mensagens reemitidas pelo produtor possuam payloads idênticos e mantenham a integridade no broker.")
     void deveValidarProcessamentoIdempotenteDePedidosDuplicados() {
         String pedidoId = "PED-DUPLICADO-" + UUID.randomUUID().toString().substring(0, 5);
         String payloadJson = String.format(
