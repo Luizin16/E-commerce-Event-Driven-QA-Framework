@@ -1,2 +1,4 @@
 "BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
-"0","","0","","3","0","","0"
+"0","Processamento de Pedidos","0","Event-Driven Architecture com Kafka","1","0","Validação de Contrato do Evento","0"
+"0","Processamento de Pedidos","0","Event-Driven Architecture com Kafka","1","0","Garantia de Idempotência","0"
+"0","Processamento de Pedidos","0","Event-Driven Architecture com Kafka","1","0","Resiliência & Processamento de Exceções","0"
